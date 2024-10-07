@@ -1,0 +1,30 @@
+name: MERN App CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the application
+        run: npm run build
+
+      - name: Deploy to Local Server
+        run: |
+          scp -r ./build user@your-local-server-ip:/path-to-your-deployment-folder
+          ssh user@your-local-server-ip 'pm2 restart all'
