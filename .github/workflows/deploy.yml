@@ -10,21 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repository
       - name: Checkout the repository
         uses: actions/checkout@v3
 
+      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
+      # Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # Build the application
       - name: Build the application
         run: npm run build
 
+      # Add SSH key to access the server
+      - name: Add SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key from GitHub secrets
+          known_hosts: your-local-server-ip
+
+      # Deploy to Local Server
       - name: Deploy to Local Server
         run: |
-          scp -r ./build user@your-local-server-ip:/path-to-your-deployment-folder
-          ssh user@your-local-server-ip 'pm2 restart all'
+          scp -r ./build user@192.168.56.1:/path-to-your-deployment-folder
+          ssh user@192.168.56.1 'pm2 restart all'
